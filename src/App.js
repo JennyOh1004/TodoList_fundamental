@@ -1,26 +1,85 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import TodoListTemplate from "./components/TodoListTemplate";
+import TodoListItem from "./components/TodoListItem";
+import Form from "./components/Form";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+class App extends Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      input: "",
+      todos: [
+        {
+          id: 0,
+          text: "react",
+          checked: false
+        },
+        {
+          id: 1,
+          text: "react",
+          checked: true
+        },
+        {
+          id: 2,
+          text: "react",
+          checked: false
+        }
+      ]
+    };
+  }
+
+  handleChange = e => {
+    this.setState({
+      input: e.target.value
+    });
+  };
+
+  handleCreate = () => {
+    const { input, todos } = this.state;
+    this.setState({
+      input: "",
+      todos: todos.concat({
+        id: this.id++,
+        text: input,
+        checked: false
+      })
+    });
+  };
+
+  handleKeyPress = e => {
+    if (e.key === "Enter") {
+      this.handleCreate();
+    }
+  };
+
+  handleRemove = id => {
+    const { todos } = this.state;
+    this.setState({
+      todos: todos.filter(todo => todo.id !== id)
+    });
+  };
+
+  render() {
+    const { input, todos } = this.state;
+    const { handleChange, handleCreate, handleKeyPress, handleRemove } = this;
+    return (
+      <div>
+        <TodoListTemplate
+          form={
+            <Form
+              value={input}
+              onCreate={handleCreate}
+              onKeyPress={handleKeyPress}
+              onChange={handleChange}
+            />
+          }
         >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+          <TodoListItem todos={todos} onRemove={handleRemove} />
+        </TodoListTemplate>
+      </div>
+    );
+  }
 }
 
 export default App;
